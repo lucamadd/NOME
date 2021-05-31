@@ -12,3 +12,4 @@ mycol = mydb["provatrack"]
 
 for x in mycol.find():
   print(x)
+
