@@ -1,15 +1,32 @@
-import pymongo
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify
+from flask_cors import cross_origin, CORS
+import db_helper
 
-myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+app = Flask(__name__,
+            static_url_path='', 
+            static_folder='static')
+#cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-mydb = myclient["local"]
+@app.route('/')
+@app.route('/index')
+def index():
+    tracks = db_helper.get_sixteen_random_tracks()
+    return render_template('index.html', tracks = tracks)
 
-collist = mydb.list_collection_names()
-if "provatrack" in collist:
-  print("The collection exists.")
+@app.route('/home')
+def home():
+    return render_template('home.html')
 
-mycol = mydb["provatrack"]
+@app.route('/song')
+def song():
+    return render_template('song.html')
 
-for x in mycol.find():
-  print(x)
 
+if __name__ == '__main__':
+    try:
+        app.run(host='0.0.0.0', port=5000)
+        
+    except RuntimeError as msg:
+        exit()
