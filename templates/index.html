@@ -131,9 +131,136 @@
       $('.ui.sidebar')
         .sidebar('attach events', '.toc.item')
       ;
-
+      var tracks = {{ tracks|tojson|safe }};
+      updateTable(1);
+      function updateTable(page){
+        console.log('hello ' + page)
+        $('#track_table').html('')
+        switch(page){
+        case 1: 
+          for(var i=0;i<4;i++){
+            $('#track_table').append(
+            '<tr>\
+              <td>\
+                <a href="#">' + tracks[i]['track_id'] + '</a>\
+              </td>'+
+              '<td class="single line">'
+                + tracks[i]['track_name'] + 
+              '</td>'+
+              '<td>'
+                + tracks[i]['track_artist'] + 
+              '</td>'+
+              '<td>'
+                + tracks[i]['track_album_name'] + 
+              '</td>'+
+              '<td>'+ tracks[i]['duration'] + '</td>'+
+            '</tr>'
+          );
+          }
+          
+          break;
+        case 2: 
+        for(var i=4;i<8;i++){
+            $('#track_table').append(
+            '<tr>\
+              <td>\
+                <a href="#">' + tracks[i]['track_id'] + '</a>\
+              </td>'+
+              '<td class="single line">'
+                + tracks[i]['track_name'] + 
+              '</td>'+
+              '<td>'
+                + tracks[i]['track_artist'] + 
+              '</td>'+
+              '<td>'
+                + tracks[i]['track_album_name'] + 
+              '</td>'+
+              '<td>'+ tracks[i]['duration'] + '</td>'+
+            '</tr>'
+          );
+          }
+          break;
+        case 3: 
+        for(var i=8;i<12;i++){
+            $('#track_table').append(
+            '<tr>\
+              <td>\
+                <a href="#">' + tracks[i]['track_id'] + '</a>\
+              </td>'+
+              '<td class="single line">'
+                + tracks[i]['track_name'] + 
+              '</td>'+
+              '<td>'
+                + tracks[i]['track_artist'] + 
+              '</td>'+
+              '<td>'
+                + tracks[i]['track_album_name'] + 
+              '</td>'+
+              '<td>'+ tracks[i]['duration'] + '</td>'+
+            '</tr>'
+          );
+          }
+          break;
+        case 4: 
+        for(var i=12;i<16;i++){
+            $('#track_table').append(
+            '<tr>\
+              <td>\
+                <a href="#">' + tracks[i]['track_id'] + '</a>\
+              </td>'+
+              '<td class="single line">'
+                + tracks[i]['track_name'] + 
+              '</td>'+
+              '<td>'
+                + tracks[i]['track_artist'] + 
+              '</td>'+
+              '<td>'
+                + tracks[i]['track_album_name'] + 
+              '</td>'+
+              '<td>'+ tracks[i]['duration'] + '</td>'+
+            '</tr>'
+          );
+          }
+          break;
+        default:
+        for(var i=0;i<4;i++){
+            $('#track_table').append(
+            '<tr>\
+              <td>\
+                <a href="#">' + tracks[i]['track_id'] + '</a>\
+              </td>'+
+              '<td class="single line">'
+                + tracks[i]['track_name'] + 
+              '</td>'+
+              '<td>'
+                + tracks[i]['track_artist'] + 
+              '</td>'+
+              '<td>'
+                + tracks[i]['track_album_name'] + 
+              '</td>'+
+              '<td>'+ tracks[i]['duration'] + '</td>'+
+            '</tr>'
+          );
+          }
+      }
+      }
+      $('#page1').click( function () {
+        updateTable(1);
+      });
+      $('#page2').click( function () {
+        updateTable(2);
+      });
+      $('#page3').click( function () {
+        updateTable(3);
+      });
+      $('#page4').click( function () {
+        updateTable(4);
+      });
+      
     })
   ;
+  
+
   </script>
 </head>
 <body>
@@ -150,8 +277,8 @@
 
 <!-- Sidebar Menu -->
 <div class="ui vertical inverted sidebar menu">
-  <a class="active item">Home</a>
-  <a class="item">All songs</a>
+  <a class="active item" href="#">Home</a>
+  <a class="item" href="{{ url_for('home') }}">All songs</a>
 </div>
 
 
@@ -164,8 +291,8 @@
         <a class="toc item">
           <i class="sidebar icon"></i>
         </a>
-        <a class="active item">Home</a>
-        <a class="item">All songs</a>
+        <a class="active item" href="#">Home</a>
+        <a class="item" href="{{ url_for('home') }}">All songs</a>
         <div class="right item">
         </div>
       </div>
@@ -190,82 +317,20 @@
           <th class="single line">Track album name</th>
           <th>Duration</th>
         </tr></thead>
-        <tbody>
-          <tr>
-            <td>
-              <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
-          <tr>
-            <td>
-                <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
-          <tr>
-            <td>
-                <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
-          <tr>
-            <td>
-                <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
+        <tbody id="track_table">
+          
+         
+          
+         
         </tbody>
         <tfoot>
           <tr><th colspan="5">
             <div class="center aligned">
                 <div class="ui pagination menu">
-                    <a class="icon item">
-                      <i class="left chevron icon"></i>
-                    </a>
-                    <a class="item">1</a>
-                    <a class="item">2</a>
-                    <a class="item">3</a>
-                    <a class="item">4</a>
-                    <a class="icon item">
-                      <i class="right chevron icon"></i>
-                    </a>
+                    <a class="item" id="page1">1</a>
+                    <a class="item" id="page2">2</a>
+                    <a class="item" id="page3">3</a>
+                    <a class="item" id="page4">4</a>
                   </div>
             </div>
           </th>
