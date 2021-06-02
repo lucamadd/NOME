@@ -141,8 +141,8 @@
 <!-- Following Menu -->
 <div class="ui large top fixed menu">
   <div class="ui container">
-    <a class="active item">Home</a>
-    <a class="item">All songs</a>
+    <a class="active item" href="{{ url_for('index')}}">Home</a>
+    <a class="item disabled" >All songs</a>
     <div class="right menu">
     </div>
   </div>
@@ -150,8 +150,8 @@
 
 <!-- Sidebar Menu -->
 <div class="ui vertical inverted sidebar menu">
-  <a class="active item">Home</a>
-  <a class="item">All songs</a>
+  <a class="active item" href="{{ url_for('index')}}">Home</a>
+  <a class="item disabled">All songs</a>
 </div>
 
 
@@ -166,36 +166,36 @@
             <table class="ui definition table">
                 <tbody><tr>
                     <td rowspan="1" class="five wide">Track ID</td>
-                    <td>Row one</td>
+                    <td>{{ track['track_id']}}</td>
                     
                 </tr>
                 <tr>
                     <td rowspan="1" class="five wide">Track name</td>
-                    <td>Row one</td>
+                    <td>{{ track['track_name']}}</td>
                 </tr>
                 <tr>
                     <td rowspan="1" class="five wide">Track artist</td>
-                    <td>Row one</td>
+                    <td>{{ track['track_artist']}}</td>
                 </tr>
                 <tr>
                     <td rowspan="1" class="five wide">Track popularity</td>
-                    <td>Row one</td>
+                    <td>{{ track['track_popularity']}}</td>
                 </tr>
                 <tr>
                     <td rowspan="1" class="five wide">Track album ID</td>
-                    <td>Row one</td>
+                    <td>{{ track['album']['track_album_id']}}</td>
                 </tr>
                 <tr>
                     <td rowspan="1" class="five wide">Track album name</td>
-                    <td>Row one</td>
+                    <td>{{ track['album']['track_album_name']}}</td>
                 </tr>
                 <tr>
-                    <td rowspan="1" class="five wide">Track album release</td>
-                    <td>Row one</td>
+                    <td rowspan="1" class="five wide single line">Track album release date</td>
+                    <td>{{ track['album']['track_album_release_date']}}</td>
                 </tr>
                 <tr>
                     <td rowspan="1" class="five wide">Playlist name</td>
-                    <td>Row one</td>
+                    <td>{{ track['playlist']['playlist_name']}}</td>
                 </tr>
                 
         
@@ -207,36 +207,36 @@
                 <tbody>
                 <tr>
                     <td rowspan="1" class="five wide">Playlist ID</td>
-                    <td>Row one</td>
+                    <td>{{ track['playlist']['playlist_id']}}</td>
                 </tr>
                 <tr>
                     <td rowspan="1" class="five wide">Playlist genre</td>
-                    <td>Row one</td>
+                    <td>{{ track['playlist']['playlist_genre']}}</td>
                 </tr>
                 <tr>
                     <td rowspan="1" class="five wide">Playlist subgenre</td>
-                    <td>Row one</td>
+                    <td>{{ track['playlist']['playlist_subgenre']}}</td>
                 </tr>
                 <tr>
                     <td rowspan="1" class="five wide">Danceability</td>
-                    <td>Row one</td>
+                    <td>{{ track['danceability']}}</td>
                 </tr>
                 <tr>
                     <td rowspan="1" class="five wide">Energy</td>
-                    <td>Row one</td>
+                    <td>{{ track['energy']}}</td>
                 </tr>
                 
                 <tr>
                     <td rowspan="1" class="five wide">Valence</td>
-                    <td>Row one</td>
+                    <td>{{ track['valence']}}</td>
                 </tr>
                 <tr>
                     <td rowspan="1" class="five wide">Tempo</td>
-                    <td>Row one</td>
+                    <td>{{ track['tempo']}}</td>
                 </tr>
                 <tr>
                     <td rowspan="1" class="five wide">Duration</td>
-                    <td>Row one</td>
+                    <td>{{ track['duration_ms']}}</td>
                 </tr>
         
         
@@ -246,10 +246,10 @@
   </div>
 
   <div class="ui vertical container" style="text-align: left;">
-    <div class="ui button">
+    <a class="ui button" href="{{ url_for('index')}}">
         <i class="arrow left icon"></i>
         Back
-    </div>
+    </a>
 </div>
 
 <br><br><br><br><br>

@@ -17,12 +17,21 @@ def index():
 
 @app.route('/home')
 def home():
-    return render_template('home.html')
+    tracks = db_helper.get_first_tracks()
+    return render_template('home.html',tracks = tracks)
 
 @app.route('/song')
 def song():
-    return render_template('song.html')
+    track_id = request.args['song']
+    track = db_helper.find_track_by_id(track_id)
+    return render_template('song.html', track=track)
 
+
+@app.route('/find_tracks', methods = ['GET', 'POST'])
+def find_tracks():
+    data = request.form
+    print(data)
+    return 'ok'
 
 if __name__ == '__main__':
     try:

@@ -9,7 +9,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
         <!-- Site Properties -->
-        <title>HOME</title>
+        <title>All songs</title>
         <link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}"/>
         <!-- You MUST include jQuery before Fomantic -->
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
@@ -131,9 +131,29 @@
       $('.ui.sidebar')
         .sidebar('attach events', '.toc.item')
       ;
-
-    })
-  ;
+      var tracks = {{ tracks|tojson|safe }};
+  for(var i=0;i<12;i++){
+            $('#track_table').append(
+            '<tr>\
+              <td>\
+                <a href="{{ url_for("song")}}?song='+tracks[i]['track_id'] +'">' + tracks[i]['track_id'] + '</a>\
+              </td>'+
+              '<td class="single line">'
+                + tracks[i]['track_name'] + 
+              '</td>'+
+              '<td>'
+                + tracks[i]['track_artist'] + 
+              '</td>'+
+              '<td>'
+                + tracks[i]['track_album_name'] + 
+              '</td>'+
+              '<td>'+ tracks[i]['duration'] + '</td>'+
+            '</tr>'
+          );
+          }
+    }) //ignorare
+  ; 
+  
   </script>
 </head>
 <body>
@@ -163,7 +183,7 @@
             <div class="column">
                 <div class="ui icon input">
                     <i class="search icon"></i>
-                    <input type="text" placeholder="Title">
+                    <input id="input_title" type="text" placeholder="Title">
                   </div>
                   
                   
@@ -172,7 +192,7 @@
             <div class="column">
                 <div class="ui icon input">
                     <i class="search icon"></i>
-                    <input type="text" placeholder="Artist">
+                    <input id="input_artist" type="text" placeholder="Artist">
                   </div>
                   
                   
@@ -180,7 +200,7 @@
             <div class="column">
                 <div class="ui icon input">
                     <i class="search icon"></i>
-                    <input type="text" placeholder="Album">
+                    <input id="input_album" type="text" placeholder="Album">
                   </div>
                   
                   
@@ -190,12 +210,37 @@
           <br><br>
           <div class="ui three column center aligned padded grid" style="border: 2px solid lightgray !important; border-radius: 4px;">
             <div class="column">
-                <div class="ui calendar" id="month_year_calendar">
+                <div class="ui calendar" id="year_calendar">
                     <div class="ui input left icon">
-                      <i class="calendar icon"></i>
-                      <input type="text" placeholder="Date">
+                      <i class="calendar icon" ></i>
+                      <input type="text" placeholder="Year">
                     </div>
                   </div>
+                  
+            </div>
+            <div class="column">
+              <div class="ui selection dropdown left icon">
+                <i class="calendar icon" style="color: gray;"></i>
+                <input type="hidden" name="pet">
+                <i class="dropdown icon"></i>
+                <div class="default text">Month</div>
+                <div class="scrollhint menu">
+                  <div class="item" data-value="0">All</div>
+                  <div class="item" data-value="1">January</div>
+                  <div class="item" data-value="2">February</div>
+                  <div class="item" data-value="3">March</div>
+                  <div class="item" data-value="4">April</div>
+                  <div class="item" data-value="5">May</div>
+                  <div class="item" data-value="6">June</div>
+                  <div class="item" data-value="7">July</div>
+                  <div class="item" data-value="8">August</div>
+                  <div class="item" data-value="9">September</div>
+                  <div class="item" data-value="10">October</div>
+                  <div class="item" data-value="11">November</div>
+                  <div class="item" data-value="12">December</div>
+                </div>
+              </div>
+                
             </div>
             <div class="column">
                 <div class="ui selection dropdown">
@@ -203,30 +248,31 @@
                     <i class="dropdown icon"></i>
                     <div class="default text">Duration  </div>
                     <div class="scrollhint menu">
-                      <div class="item" data-value="0">Less than 2 minutes</div>
-                      <div class="item" data-value="1">Between 2 and 3 minutes</div>
-                      <div class="item" data-value="2">Between 3 and 4 minutes</div>
-                      <div class="item" data-value="3">More than 4 minutes</div>
+                      <div class="item" data-value="0">All</div>
+                      <div class="item" data-value="1">Less than 2 minutes</div>
+                      <div class="item" data-value="2">Between 2 and 3 minutes</div>
+                      <div class="item" data-value="3">Between 3 and 4 minutes</div>
+                      <div class="item" data-value="4">More than 4 minutes</div>
                     </div>
                   </div>
             </div>
-            <div class="column">
-                <div class="ui selection dropdown">
-                    <input type="hidden" name="pet">
-                    <i class="dropdown icon"></i>
-                    <div class="default text">Genre</div>
-                    <div class="scrollhint menu">
-                      <div class="item" data-value="0">Less than 2 minutes</div>
-                      <div class="item" data-value="1">Between 2 and 3 minutes</div>
-                      <div class="item" data-value="2">Between 3 and 4 minutes</div>
-                      <div class="item" data-value="3">More than 4 minutes</div>
-                    </div>
-                  </div>
-            </div>
+            
         </div>
         <br><br>
           <div class="ui three column center aligned padded grid" style="border: 2px solid lightgray !important; border-radius: 4px;">
-              <div class="column"></div>
+              <div class="column">
+                <div class="ui selection dropdown">
+                  <input type="hidden" name="pet">
+                  <i class="dropdown icon"></i>
+                  <div class="default text">Genre</div>
+                  <div class="scrollhint menu">
+                    <div class="item" data-value="0">Less than 2 minutes</div>
+                    <div class="item" data-value="1">Between 2 and 3 minutes</div>
+                    <div class="item" data-value="2">Between 3 and 4 minutes</div>
+                    <div class="item" data-value="3">More than 4 minutes</div>
+                  </div>
+                </div>
+              </div>
               <div class="column">
                 
               </div>
@@ -235,14 +281,15 @@
                 <i class="dropdown icon"></i>
                 <div class="default text">Order by popularity</div>
                 <div class="scrollhint menu">
-                  <div class="item" data-value="0">Most popular first</div>
-                  <div class="item" data-value="1">Least popular first</div>
+                  <div class="item" data-value="0">All</div>
+                  <div class="item" data-value="1">Most popular first</div>
+                  <div class="item" data-value="2">Least popular first</div>
                 </div>
               </div></div>
           </div>
     </div>
     <div class="ui vertical container" style="text-align: center;">
-        <div class="ui green button">
+        <div id="search_button" class="ui green button">
             Search
         </div>
     </div>
@@ -256,187 +303,8 @@
           <th class="single line">Track album name</th>
           <th>Duration</th>
         </tr></thead>
-        <tbody>
-          <tr>
-            <td>
-              <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
-          <tr>
-            <td>
-                <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
-          <tr>
-            <td>
-                <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
-          <tr>
-            <td>
-                <a href="#">iuehrgoerjf9g438oig</a>
-            </td>
-            <td class="single line">
-              I don't care
-            </td>
-            <td>
-             Ed Sheeran
-            </td>
-            <td>
-              I don't care
-            </td>
-            <td>3:20</td>
-          </tr>
+        <tbody id="track_table">
+         
         </tbody>
         <tfoot>
           <tr><th colspan="5">
@@ -446,9 +314,6 @@
                       <i class="left chevron icon"></i>
                     </a>
                     <a class="item">1</a>
-                    <a class="item">2</a>
-                    <a class="item">3</a>
-                    <a class="item">4</a>
                     <a class="icon item">
                       <i class="right chevron icon"></i>
                     </a>
@@ -494,14 +359,35 @@
 
 </body>
 <script>
-    $('#month_year_calendar')
+    $('#year_calendar')
   .calendar({
-    type: 'month'
+    type: 'year'
   })
 ;
 $('.ui.dropdown')
   .dropdown()
 ;
+$('#search_button').click( function() {
+  $.ajax({
+        url: '{{ url_for("find_tracks")}}',
+        type: 'POST',
+        data: {
+            'title': $('#input_title').val(),
+            'artist': $('#input_artist').html(),
+            'album': $('#input_album').html(),
+            'year': null,
+            'month': null,
+            'duration': null,
+            'genre': null,
+            'popularity': null
+        }
+      ,success: function(res){
+
+}, error: function(res){
+
+}
+  });
+});
 </script>
 
 </html>

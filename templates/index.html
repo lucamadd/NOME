@@ -9,7 +9,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
         <!-- Site Properties -->
-        <title>INDEX</title>
+        <title>NOME</title>
         <link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}"/>
         <!-- You MUST include jQuery before Fomantic -->
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
@@ -134,7 +134,6 @@
       var tracks = {{ tracks|tojson|safe }};
       updateTable(1);
       function updateTable(page){
-        console.log('hello ' + page)
         $('#track_table').html('')
         switch(page){
         case 1: 
@@ -142,7 +141,7 @@
             $('#track_table').append(
             '<tr>\
               <td>\
-                <a href="#">' + tracks[i]['track_id'] + '</a>\
+                <a href="{{ url_for("song")}}?song='+tracks[i]['track_id'] +'">' + tracks[i]['track_id'] + '</a>\
               </td>'+
               '<td class="single line">'
                 + tracks[i]['track_name'] + 
@@ -164,7 +163,7 @@
             $('#track_table').append(
             '<tr>\
               <td>\
-                <a href="#">' + tracks[i]['track_id'] + '</a>\
+                <a href="{{ url_for("song")}}?song='+tracks[i]['track_id'] +'">' + tracks[i]['track_id'] + '</a>\
               </td>'+
               '<td class="single line">'
                 + tracks[i]['track_name'] + 
@@ -185,7 +184,7 @@
             $('#track_table').append(
             '<tr>\
               <td>\
-                <a href="#">' + tracks[i]['track_id'] + '</a>\
+                <a href="{{ url_for("song")}}?song='+tracks[i]['track_id'] +'">' + tracks[i]['track_id'] + '</a>\
               </td>'+
               '<td class="single line">'
                 + tracks[i]['track_name'] + 
@@ -206,7 +205,7 @@
             $('#track_table').append(
             '<tr>\
               <td>\
-                <a href="#">' + tracks[i]['track_id'] + '</a>\
+                <a href="{{ url_for("song")}}?song='+tracks[i]['track_id'] +'">' + tracks[i]['track_id'] + '</a>\
               </td>'+
               '<td class="single line">'
                 + tracks[i]['track_name'] + 
@@ -227,7 +226,7 @@
             $('#track_table').append(
             '<tr>\
               <td>\
-                <a href="#">' + tracks[i]['track_id'] + '</a>\
+                <a href="{{ url_for("song")}}?song='+tracks[i]['track_id'] +'">' + tracks[i]['track_id'] + '</a>\
               </td>'+
               '<td class="single line">'
                 + tracks[i]['track_name'] + 
@@ -257,10 +256,11 @@
         updateTable(4);
       });
       
-    })
+    })  //errore parentesi da ignorare
   ;
+function sendID(id){
   
-
+}
   </script>
 </head>
 <body>
@@ -303,7 +303,7 @@
         NOME
       </h1>
       <h2>Do whatever you want when you want to.</h2>
-      <div class="ui huge primary button">Get Started <i class="right arrow icon"></i></div>
+      <a class="ui huge primary button" href="{{ url_for('home')}}">Get Started <i class="right arrow icon"></i></a>
     </div>
 
   </div>
