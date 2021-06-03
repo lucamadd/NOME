@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 from flask_cors import cross_origin, CORS
 import db_helper
+import json
 
 app = Flask(__name__,
             static_url_path='', 
@@ -18,7 +19,7 @@ def index():
 @app.route('/home')
 def home():
     tracks = db_helper.get_first_tracks()
-    return render_template('home.html',tracks = tracks)
+    return render_template('home.html',tracks = tracks, genres = json.dumps(db_helper.get_all_genres()), subgenres = db_helper.get_all_subgenres())
 
 @app.route('/song')
 def song():
@@ -30,8 +31,8 @@ def song():
 @app.route('/find_tracks', methods = ['GET', 'POST'])
 def find_tracks():
     data = request.form
-    print(data)
-    return 'ok'
+    tracks = db_helper.find_tracks(data)
+    return tracks
 
 if __name__ == '__main__':
     try:

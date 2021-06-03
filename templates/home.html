@@ -151,6 +151,16 @@
             '</tr>'
           );
           }
+          var genres = {{ genres|safe }};
+          $('#genre_dropdown').append('<div class="item" data-value="0">All</div>');
+          for(var i=1;i<genres.length;i++){
+            $('#genre_dropdown').append('<div class="item" data-value="'+ genres[i] +'">'+ genres[i] + '</div>');
+          }
+          var subgenres = {{ subgenres|safe }};
+          $('#subgenre_dropdown').append('<div class="item" data-value="0">All</div>');
+          for(var i=1;i<subgenres.length;i++){
+            $('#subgenre_dropdown').append('<div class="item" data-value="'+ subgenres[i] +'">'+ subgenres[i] + '</div>');
+          }
     }) //ignorare
   ; 
   
@@ -213,7 +223,7 @@
                 <div class="ui calendar" id="year_calendar">
                     <div class="ui input left icon">
                       <i class="calendar icon" ></i>
-                      <input type="text" placeholder="Year">
+                      <input id="input_year" type="text" placeholder="Year">
                     </div>
                   </div>
                   
@@ -221,7 +231,7 @@
             <div class="column">
               <div class="ui selection dropdown left icon">
                 <i class="calendar icon" style="color: gray;"></i>
-                <input type="hidden" name="pet">
+                <input id="input_month" type="hidden" name="pet">
                 <i class="dropdown icon"></i>
                 <div class="default text">Month</div>
                 <div class="scrollhint menu">
@@ -244,7 +254,7 @@
             </div>
             <div class="column">
                 <div class="ui selection dropdown">
-                    <input type="hidden" name="pet">
+                    <input id="input_duration" type="hidden" name="pet">
                     <i class="dropdown icon"></i>
                     <div class="default text">Duration  </div>
                     <div class="scrollhint menu">
@@ -262,22 +272,26 @@
           <div class="ui three column center aligned padded grid" style="border: 2px solid lightgray !important; border-radius: 4px;">
               <div class="column">
                 <div class="ui selection dropdown">
-                  <input type="hidden" name="pet">
+                  <input id="input_genre" type="hidden" name="pet">
                   <i class="dropdown icon"></i>
                   <div class="default text">Genre</div>
-                  <div class="scrollhint menu">
-                    <div class="item" data-value="0">Less than 2 minutes</div>
-                    <div class="item" data-value="1">Between 2 and 3 minutes</div>
-                    <div class="item" data-value="2">Between 3 and 4 minutes</div>
-                    <div class="item" data-value="3">More than 4 minutes</div>
+                  <div id="genre_dropdown" class="scrollhint menu">
+                    
                   </div>
                 </div>
               </div>
               <div class="column">
-                
+                <div class="ui selection dropdown">
+                  <input id="input_subgenre" type="hidden" name="pet">
+                  <i class="dropdown icon"></i>
+                  <div class="default text">Subgenre</div>
+                  <div id="subgenre_dropdown" class="scrollhint menu">
+                    
+                  </div>
+                </div>
               </div>
               <div class="column"><div class="ui selection middle aligned dropdown">
-                <input type="hidden" name="pet">
+                <input id="input_popularity" type="hidden" name="pet">
                 <i class="dropdown icon"></i>
                 <div class="default text">Order by popularity</div>
                 <div class="scrollhint menu">
@@ -373,13 +387,14 @@ $('#search_button').click( function() {
         type: 'POST',
         data: {
             'title': $('#input_title').val(),
-            'artist': $('#input_artist').html(),
-            'album': $('#input_album').html(),
-            'year': null,
-            'month': null,
-            'duration': null,
-            'genre': null,
-            'popularity': null
+            'artist': $('#input_artist').val(),
+            'album': $('#input_album').val(),
+            'year': $('#input_year').val(),
+            'month': $('#input_month').val(),
+            'duration': $('#input_duration').val(),
+            'genre': $('#input_genre').val(),
+            'subgenre': $('#input_subgenre').val(),
+            'popularity': $('#input_popularity').val()
         }
       ,success: function(res){
 
