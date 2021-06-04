@@ -113,7 +113,7 @@
   <script>
   $(document)
     .ready(function() {
-
+      
       // fix menu when passed
       $('.masthead')
         .visibility({
@@ -148,9 +148,13 @@
                 + tracks[i]['track_album_name'] + 
               '</td>'+
               '<td>'+ tracks[i]['duration'] + '</td>'+
+              '<td><div class="ui yellow rating" data-rating="'+ parseFloat(tracks[i]['track_popularity'])/20 +'" data-max-rating="5"></div></td>'+
             '</tr>'
           );
           }
+          $('.ui.yellow.rating')
+            .rating('disable')
+          ;
           var genres = {{ genres|safe }};
           $('#genre_dropdown').append('<div class="item" data-value="0">All</div>');
           for(var i=1;i<genres.length;i++){
@@ -309,26 +313,31 @@
     </div>
 
   <div class="ui vertical stripe container">
+    
     <table class="ui celled padded table">
+      <div class="ui inverted dimmer">
+        <div class="ui text loader">Loading</div>
+      </div>
         <thead>
           <tr><th class="single line">Track ID</th>
           <th class="single line">Track name</th>
           <th class="single line">Track artist</th>
           <th class="single line">Track album name</th>
           <th>Duration</th>
+          <th>Popularity</th>
         </tr></thead>
         <tbody id="track_table">
-         
+          
         </tbody>
         <tfoot>
-          <tr><th colspan="5">
+          <tr><th colspan="6">
             <div class="center aligned">
                 <div class="ui pagination menu">
-                    <a class="icon item">
+                    <a id="left_icon" class="icon disabled item">
                       <i class="left chevron icon"></i>
                     </a>
-                    <a class="item">1</a>
-                    <a class="icon item">
+                    <a id="table_page" class="item">1</a>
+                    <a id="right_icon" class="icon item">
                       <i class="right chevron icon"></i>
                     </a>
                   </div>
@@ -375,13 +384,28 @@
 <script>
     $('#year_calendar')
   .calendar({
-    type: 'year'
+    type: 'year',
+    minDate: new Date(new Date().getFullYear() - 65, new Date().getMonth(), new Date().getDate()),
+    maxDate: new Date(new Date().getFullYear() - 1, new Date().getMonth(), new Date().getDate())
   })
 ;
 $('.ui.dropdown')
   .dropdown()
 ;
-$('#search_button').click( function() {
+$('#right_icon').click( function() {
+    createTable($('#table_page').html(), true);
+});
+$('#left_icon').click( function() {
+    createTable($('#table_page').html(), false);
+});
+function createTable(page, isForward){
+  $('.ui.inverted.dimmer').removeClass().addClass('ui active inverted dimmer');
+  var pageToSkip;
+  if (isForward){
+    pageToSkip = page;
+  } else {
+    pageToSkip = page -2;
+  }
   $.ajax({
         url: '{{ url_for("find_tracks")}}',
         type: 'POST',
@@ -394,14 +418,61 @@ $('#search_button').click( function() {
             'duration': $('#input_duration').val(),
             'genre': $('#input_genre').val(),
             'subgenre': $('#input_subgenre').val(),
-            'popularity': $('#input_popularity').val()
+            'popularity': $('#input_popularity').val(),
+            'page': pageToSkip
         }
       ,success: function(res){
+        $('#track_table').html('');
+        for (var i=0;i<res.length;i++){
+          $('#track_table').append(
+            '<tr>\
+              <td>\
+                <a href="{{ url_for("song")}}?song='+res[i]['track_id'] +'">' + res[i]['track_id'] + '</a>\
+              </td>'+
+              '<td class="single line">'
+                + res[i]['track_name'] + 
+              '</td>'+
+              '<td>'
+                + res[i]['track_artist'] + 
+              '</td>'+
+              '<td>'
+                + res[i]['album']['track_album_name'] + 
+              '</td>'+
+              '<td>'+ res[i]['duration_ms'] + '</td>'+
+              '<td><div class="ui yellow rating" data-rating="'+ parseFloat(res[i]['track_popularity'])/20 +'" data-max-rating="5"></div></td>'+
+            '</tr>'
+          );
+          $('.ui.yellow.rating')
+            .rating('disable')
+          ;
+        }
+        if (isForward){
+          $('#table_page').html(parseInt(page) + 1);
+        } else {
+          $('#table_page').html(parseInt(page) - 1);
+        }
+        
+        if (parseInt($('#table_page').html()) >= 2){
+          $('#left_icon').removeClass('disabled');
+        } else if (parseInt($('#table_page').html()) == 1){
+          $('#left_icon').addClass('disabled');
+        }
+        if (res.length < 12){
+          $('#right_icon').addClass('disabled');
+        } else {
+          $('#right_icon').removeClass('disabled');
+        }
+  
+
 
 }, error: function(res){
 
 }
   });
+  $('.ui.active.inverted.dimmer').removeClass().addClass('ui inverted dimmer');
+}
+$('#search_button').click( function() {
+  createTable(0, true);
 });
 </script>
 
