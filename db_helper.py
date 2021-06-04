@@ -59,6 +59,7 @@ def get_first_tracks():
     track['track_artist'] = result['track_artist']
     track['track_album_name'] = result['album']['track_album_name']
     track['duration'] = ms_to_minutes(int(result['duration_ms']))
+    track['track_popularity'] = result['track_popularity']
 
     tracks.append(track)
     
@@ -90,6 +91,8 @@ def find_tracks(data):
   coll = db['track']
 
   results = []
+
+  page = data['page']  # inizialmente 1
 
   if data == None:
     return 'error'
@@ -162,18 +165,22 @@ def find_tracks(data):
   if subgenre != '' and subgenre != '0':
     query['playlist.playlist_subgenre'] = subgenre
 
-  docs = coll.find(query)
+  docs = coll.find(query).skip((int(page))*12).limit(12)
   if popularity != '' or popularity != '0':
     if popularity == '1': #most popular first
-      docs = coll.find(query).sort('track_popularity', pymongo.DESCENDING)
+      docs = coll.find(query).skip((int(page))*12).limit(12).sort('track_popularity', pymongo.DESCENDING)
     elif popularity == '2': #least popular first
-      docs = coll.find(query).sort('track_popularity', pymongo.ASCENDING)
+      docs = coll.find(query).skip((int(page))*12).limit(12).sort('track_popularity', pymongo.ASCENDING)
     
 
   for doc in docs:
+    doc.pop('_id')
+    doc['duration_ms'] = ms_to_minutes(doc['duration_ms'])
     results.append(doc)
 
-  print(results[0])
+
+
+  return results
 
 
 

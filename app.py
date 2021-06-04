@@ -32,7 +32,7 @@ def song():
 def find_tracks():
     data = request.form
     tracks = db_helper.find_tracks(data)
-    return tracks
+    return jsonify(tracks)
 
 if __name__ == '__main__':
     try:
