@@ -182,7 +182,52 @@ def find_tracks(data):
 
   return results
 
+def find_tracks_admin(data):
+  myclient = pymongo.MongoClient("mongodb+srv://admin:admin@clusternome.9mulw.mongodb.net/NOME?retryWrites=true&w=majority")
 
+  db = myclient["NOME"]
+
+  coll = db['track']
+
+  results = []
+
+  page = data['page']  # inizialmente 1
+
+  if data == None:
+    return 'error'
+  track_name = data['title']
+  track_artist = data['artist']
+  track_id = data['track_id']
+
+
+  query = {}
+  docs = None
+
+  if track_name != '':
+    query['track_name'] = {
+      "$regex": f'\\b{track_name}\\b',
+      "$options" :'i'}
+
+  if track_artist != '':
+    query['track_artist'] = {
+      "$regex": f'\\b{track_artist}\\b',
+      "$options" :'i'}
+
+  if track_id != '':
+    query['track_id'] = int(track_id)
+  
+  
+
+  docs = coll.find(query).skip((int(page))*12).limit(12)
+    
+
+  for doc in docs:
+    doc.pop('_id')
+    doc['duration_ms'] = ms_to_minutes(doc['duration_ms'])
+    results.append(doc)
+
+
+  return results
 
 def get_all_genres():
   genres = []
@@ -215,6 +260,83 @@ def get_all_subgenres():
   return subgenres
 
 
+def get_new_track_id():
+  myclient = pymongo.MongoClient("mongodb+srv://admin:admin@clusternome.9mulw.mongodb.net/NOME?retryWrites=true&w=majority")
+
+  db = myclient["NOME"]
+
+  docs = db.track.find().sort('track_id', pymongo.DESCENDING).limit(1)
+
+  result = None
+
+  for doc in docs:
+    result = doc
+
+  return result['track_id'] + 1
+
+def insert_song(data):
+  myclient = pymongo.MongoClient("mongodb+srv://admin:admin@clusternome.9mulw.mongodb.net/NOME?retryWrites=true&w=majority")
+
+  db = myclient["NOME"]
+
+  if data == None:
+    return False
+
+  track_id = int(data['track_id'])
+  track_name = data['track_name']
+  track_artist = data['track_artist']
+  track_popularity = int(data['track_popularity'])
+  track_album_id = data['track_album_id']
+  track_album_name = data['track_album_name']
+  track_album_release_date = data['track_album_release_date']
+  track_playlist_name = data['track_playlist_name']
+  track_playlist_id = data['track_playlist_id']
+  track_playlist_genre = data['track_playlist_genre']
+  track_playlist_subgenre = data['track_playlist_subgenre']
+  track_danceability = float(data['track_danceability'])
+  track_energy = float(data['track_energy'])
+  track_valence = float(data['track_valence'])
+  track_tempo = float(data['track_tempo'])
+  track_duration_min = int(data['track_duration_min'])
+  track_duration_sec = int(data['track_duration_sec'])
+
+  #trasformo in ms
+  track_duration_sec = track_duration_sec + track_duration_min*60
+  track_duration_ms = track_duration_sec * 1000
+
+  #inserisco nel db
+  doc = {'track_id': track_id, 'track_name': track_name, 'track_artist': track_artist,
+         'track_popularity': track_popularity, 'album': {'track_album_id': track_album_id,
+          'track_album_name': track_album_name, 'track_album_release_date': track_album_release_date},
+          'playlist': {'playlist_name': track_playlist_name, 'playlist_id': track_playlist_id,
+          'playlist_genre': track_playlist_genre, 'playlist_subgenre': track_playlist_subgenre},
+          'danceability': track_danceability, 'energy': track_energy, 'valence':track_valence, 'tempo': track_tempo,
+          'duration_ms': track_duration_ms}
+
+  result = db.track.insert_one(doc)
+  if result.inserted_id:
+    return True
+  return False
+
+
+def delete_song(data):
+  myclient = pymongo.MongoClient("mongodb+srv://admin:admin@clusternome.9mulw.mongodb.net/NOME?retryWrites=true&w=majority")
+
+  db = myclient["NOME"]
+  track_id = int(data['track_id'])
+
+  result = db.track.delete_one({'track_id': track_id})
+  if result.deleted_count == 1:
+    return True
+  return False
+  
+
+
+
+
+
+
+
 
 
 def ms_to_minutes(ms):
@@ -229,5 +351,4 @@ def ms_to_minutes(ms):
   return f"{minutes}:{seconds}"
 
 
-if __name__ == "__main__":
-  get_all_genres()
+

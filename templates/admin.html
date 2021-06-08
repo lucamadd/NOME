@@ -1,0 +1,395 @@
+        
+<!DOCTYPE html>
+<html>
+<head>
+ 
+        <!-- Standard Meta -->
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+        <!-- Site Properties -->
+        <title>Admin</title>
+        <link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}"/>
+        <!-- You MUST include jQuery before Fomantic -->
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.js"></script>
+
+  <style type="text/css">
+
+    .hidden.menu {
+      display: none;
+    }
+
+    .masthead.segment {
+      min-height: 700px;
+      padding: 1em 0em;
+    }
+    .masthead .logo.item img {
+      margin-right: 1em;
+    }
+    .masthead .ui.menu .ui.button {
+      margin-left: 0.5em;
+    }
+    .masthead h1.ui.header {
+      margin-top: 3em;
+      margin-bottom: 0em;
+      font-size: 4em;
+      font-weight: normal;
+    }
+    .masthead h2 {
+      font-size: 1.7em;
+      font-weight: normal;
+    }
+
+    .ui.vertical.stripe {
+      padding: 2em 0em;
+    }
+    .ui.vertical.stripe h3 {
+      font-size: 2em;
+    }
+    .ui.vertical.stripe .button + h3,
+    .ui.vertical.stripe p + h3 {
+      margin-top: 3em;
+    }
+    .ui.vertical.stripe .floated.image {
+      clear: both;
+    }
+    .ui.vertical.stripe p {
+      font-size: 1.33em;
+    }
+    .ui.vertical.stripe .horizontal.divider {
+      margin: 3em 0em;
+    }
+
+    .quote.stripe.segment {
+      padding: 0em;
+    }
+    .quote.stripe.segment .grid .column {
+      padding-top: 5em;
+      padding-bottom: 5em;
+    }
+
+    .footer.segment {
+      padding: 5em 0em;
+    }
+
+    .secondary.pointing.menu .toc.item {
+      display: none;
+    }
+
+    @media only screen and (max-width: 700px) {
+      .ui.fixed.menu {
+        display: none !important;
+      }
+      .secondary.pointing.menu .item,
+      .secondary.pointing.menu .menu {
+        display: none;
+      }
+      .secondary.pointing.menu .toc.item {
+        display: block;
+      }
+      .masthead.segment {
+        min-height: 350px;
+      }
+      .masthead h1.ui.header {
+        font-size: 2em;
+        margin-top: 1.5em;
+      }
+      .masthead h2 {
+        margin-top: 0.5em;
+        font-size: 1.5em;
+      }
+    }
+
+
+  </style>
+
+  <script src="assets/library/jquery.min.js"></script>
+  <script src="../dist/components/visibility.js"></script>
+  <script src="../dist/components/sidebar.js"></script>
+  <script src="../dist/components/transition.js"></script>
+  <script>
+  $(document)
+    .ready(function() {
+      
+      // fix menu when passed
+      $('.masthead')
+        .visibility({
+          once: false,
+          onBottomPassed: function() {
+            $('.fixed.menu').transition('fade in');
+          },
+          onBottomPassedReverse: function() {
+            $('.fixed.menu').transition('fade out');
+          }
+        })
+      ;
+
+      // create sidebar and attach to menu open
+      $('.ui.sidebar')
+        .sidebar('attach events', '.toc.item')
+      ;
+      var tracks = {{ tracks|tojson|safe }};
+  for(var i=0;i<12;i++){
+            $('#track_table').append(
+            '<tr>\
+              <td>\
+                <a href="{{ url_for("song_admin")}}?song='+tracks[i]['track_id'] +'">' + tracks[i]['track_id'] + '</a>\
+              </td>'+
+              '<td class="single line">'
+                + tracks[i]['track_name'] + 
+              '</td>'+
+              '<td>'
+                + tracks[i]['track_artist'] + 
+              '</td>'+
+              '<td>'
+                + tracks[i]['track_album_name'] + 
+              '</td>'+
+              '<td>'+ tracks[i]['duration'] + '</td>'+
+              '<td><div class="ui yellow rating" data-rating="'+ parseFloat(tracks[i]['track_popularity'])/20 +'" data-max-rating="5"></div></td>'+
+            '</tr>'
+          );
+          }
+          $('.ui.yellow.rating')
+            .rating('disable')
+          ;
+          var genres = {{ genres|safe }};
+          $('#genre_dropdown').append('<div class="item" data-value="0">All</div>');
+          for(var i=1;i<genres.length;i++){
+            $('#genre_dropdown').append('<div class="item" data-value="'+ genres[i] +'">'+ genres[i] + '</div>');
+          }
+          var subgenres = {{ subgenres|safe }};
+          $('#subgenre_dropdown').append('<div class="item" data-value="0">All</div>');
+          for(var i=1;i<subgenres.length;i++){
+            $('#subgenre_dropdown').append('<div class="item" data-value="'+ subgenres[i] +'">'+ subgenres[i] + '</div>');
+          }
+    }) //ignorare
+  ; 
+  
+  </script>
+</head>
+<body>
+
+<!-- Following Menu -->
+<div class="ui large top fixed menu">
+  <div class="ui container">
+    <a class="item" href="{{ url_for('index') }}">Home</a>
+    <a class="active item" href="#">All songs</a>
+    <div class="right menu">
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar Menu -->
+<div class="ui vertical inverted sidebar menu">
+  <a class="item" href="{{ url_for('index') }}">Home</a>
+  <a class="active item" href="#">All songs</a>
+</div>
+
+
+<!-- Page Contents -->
+<div class="pusher">
+
+  <div class="ui vertical stripe container" style="margin-top: 40px;">
+    <div class="ui three column center aligned padded grid" style="border: 2px solid lightgray !important; border-radius: 4px;">
+        <div class="column">
+            <div class="ui icon input">
+                <i class="search icon"></i>
+                <input id="input_title" type="text" placeholder="Title">
+              </div>
+              
+              
+          
+        </div>
+        <div class="column">
+            <div class="ui icon input">
+                <i class="search icon"></i>
+                <input id="input_artist" type="text" placeholder="Artist">
+              </div>
+              
+              
+        </div>
+        <div class="column">
+            <div class="ui icon input">
+                <i class="search icon"></i>
+                <input id="input_id" type="text" placeholder="ID">
+              </div>
+              
+              
+          
+        </div>
+      </div>
+</div>
+    <div class="ui vertical container" style="text-align: center;">
+      <div class="ui three column center aligned padded grid" style="border: 2px solid lightgray !important; border-radius: 4px;">
+        <div class="column"><div id="search_button" class="ui green button">
+          Search
+      </div></div>
+        <div class="column"><a href="{{ url_for('new_song')}}" id="insert_button" class="ui button">
+          Insert new
+      </a></div>
+      </div>
+        
+    </div>
+
+  <div class="ui vertical stripe container">
+    
+    <table class="ui celled padded table">
+      <div class="ui inverted dimmer">
+        <div class="ui text loader">Loading</div>
+      </div>
+        <thead>
+          <tr><th class="single line">Track ID</th>
+          <th class="single line">Track name</th>
+          <th class="single line">Track artist</th>
+          <th class="single line">Track album name</th>
+          <th>Duration</th>
+          <th>Popularity</th>
+        </tr></thead>
+        <tbody id="track_table">
+          
+        </tbody>
+        <tfoot>
+          <tr><th colspan="6">
+            <div class="center aligned">
+                <div class="ui pagination menu">
+                    <a id="left_icon" class="icon disabled item">
+                      <i class="left chevron icon"></i>
+                    </a>
+                    <a id="table_page" class="item">1</a>
+                    <a id="right_icon" class="icon item">
+                      <i class="right chevron icon"></i>
+                    </a>
+                  </div>
+            </div>
+          </th>
+        </tr></tfoot>
+      </table>
+  </div>
+
+
+
+
+  <div class="ui inverted vertical footer segment">
+    <div class="ui container">
+      <div class="ui stackable inverted divided equal height stackable grid">
+        <div class="three wide column">
+          <h4 class="ui inverted header">About</h4>
+          <div class="ui inverted link list">
+            <a href="#" class="item">Sitemap</a>
+            <a href="#" class="item">Contact Us</a>
+            <a href="#" class="item">Religious Ceremonies</a>
+            <a href="#" class="item">Gazebo Plans</a>
+          </div>
+        </div>
+        <div class="three wide column">
+          <h4 class="ui inverted header">Services</h4>
+          <div class="ui inverted link list">
+            <a href="#" class="item">Banana Pre-Order</a>
+            <a href="#" class="item">DNA FAQ</a>
+            <a href="#" class="item">How To Access</a>
+            <a href="#" class="item">Favorite X-Men</a>
+          </div>
+        </div>
+        <div class="seven wide column">
+          <h4 class="ui inverted header">Footer Header</h4>
+          <p>Extra space for a call to action inside the footer that could help re-engage users.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+<script>
+    $('#year_calendar')
+  .calendar({
+    type: 'year',
+    minDate: new Date(new Date().getFullYear() - 65, new Date().getMonth(), new Date().getDate()),
+    maxDate: new Date(new Date().getFullYear() - 1, new Date().getMonth(), new Date().getDate())
+  })
+;
+$('.ui.dropdown')
+  .dropdown()
+;
+$('#right_icon').click( function() {
+    createTable($('#table_page').html(), true);
+});
+$('#left_icon').click( function() {
+    createTable($('#table_page').html(), false);
+});
+function createTable(page, isForward){
+  $('.ui.inverted.dimmer').removeClass().addClass('ui active inverted dimmer');
+  var pageToSkip;
+  if (isForward){
+    pageToSkip = page;
+  } else {
+    pageToSkip = page -2;
+  }
+  $.ajax({
+        url: '{{ url_for("find_tracks_admin")}}',
+        type: 'POST',
+        data: {
+            'title': $('#input_title').val(),
+            'artist': $('#input_artist').val(),
+            'track_id': $('#input_id').val(),
+            'page': pageToSkip
+        }
+      ,success: function(res){
+        $('#track_table').html('');
+        for (var i=0;i<res.length;i++){
+          $('#track_table').append(
+            '<tr>\
+              <td>\
+                <a href="{{ url_for("song_admin")}}?song='+res[i]['track_id'] +'">' + res[i]['track_id'] + '</a>\
+              </td>'+
+              '<td class="single line">'
+                + res[i]['track_name'] + 
+              '</td>'+
+              '<td>'
+                + res[i]['track_artist'] + 
+              '</td>'+
+              '<td>'
+                + res[i]['album']['track_album_name'] + 
+              '</td>'+
+              '<td>'+ res[i]['duration_ms'] + '</td>'+
+              '<td><div class="ui yellow rating" data-rating="'+ parseFloat(res[i]['track_popularity'])/20 +'" data-max-rating="5"></div></td>'+
+            '</tr>'
+          );
+          $('.ui.yellow.rating')
+            .rating('disable')
+          ;
+        }
+        if (isForward){
+          $('#table_page').html(parseInt(page) + 1);
+        } else {
+          $('#table_page').html(parseInt(page) - 1);
+        }
+        
+        if (parseInt($('#table_page').html()) >= 2){
+          $('#left_icon').removeClass('disabled');
+        } else if (parseInt($('#table_page').html()) == 1){
+          $('#left_icon').addClass('disabled');
+        }
+        if (res.length < 12){
+          $('#right_icon').addClass('disabled');
+        } else {
+          $('#right_icon').removeClass('disabled');
+        }
+  
+
+
+}, error: function(res){
+
+}
+  });
+  $('.ui.active.inverted.dimmer').removeClass().addClass('ui inverted dimmer');
+}
+$('#search_button').click( function() {
+  createTable(0, true);
+});
+</script>
+
+</html>

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <!-- Standard Meta -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <!-- Site Properties -->
+  <title>New song</title>
+  <link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}" />
+  <!-- You MUST include jQuery before Fomantic -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.js"></script>
+
+  <style type="text/css">
+    .hidden.menu {
+      display: none;
+    }
+
+    .masthead.segment {
+      min-height: 700px;
+      padding: 1em 0em;
+    }
+
+    .masthead .logo.item img {
+      margin-right: 1em;
+    }
+
+    .masthead .ui.menu .ui.button {
+      margin-left: 0.5em;
+    }
+
+    .masthead h1.ui.header {
+      margin-top: 3em;
+      margin-bottom: 0em;
+      font-size: 4em;
+      font-weight: normal;
+    }
+
+    .masthead h2 {
+      font-size: 1.7em;
+      font-weight: normal;
+    }
+
+    .ui.vertical.stripe {
+      padding: 2em 0em;
+    }
+
+    .ui.vertical.stripe h3 {
+      font-size: 2em;
+    }
+
+    .ui.vertical.stripe .button+h3,
+    .ui.vertical.stripe p+h3 {
+      margin-top: 3em;
+    }
+
+    .ui.vertical.stripe .floated.image {
+      clear: both;
+    }
+
+    .ui.vertical.stripe p {
+      font-size: 1.33em;
+    }
+
+    .ui.vertical.stripe .horizontal.divider {
+      margin: 3em 0em;
+    }
+
+    .quote.stripe.segment {
+      padding: 0em;
+    }
+
+    .quote.stripe.segment .grid .column {
+      padding-top: 5em;
+      padding-bottom: 5em;
+    }
+
+    .footer.segment {
+      padding: 5em 0em;
+    }
+
+    .secondary.pointing.menu .toc.item {
+      display: none;
+    }
+
+    @media only screen and (max-width: 700px) {
+      .ui.fixed.menu {
+        display: none !important;
+      }
+
+      .secondary.pointing.menu .item,
+      .secondary.pointing.menu .menu {
+        display: none;
+      }
+
+      .secondary.pointing.menu .toc.item {
+        display: block;
+      }
+
+      .masthead.segment {
+        min-height: 350px;
+      }
+
+      .masthead h1.ui.header {
+        font-size: 2em;
+        margin-top: 1.5em;
+      }
+
+      .masthead h2 {
+        margin-top: 0.5em;
+        font-size: 1.5em;
+      }
+    }
+
+    .ui.fluid.search.dropdown {
+      border: none !important;
+      outline: none !important;
+    }
+  </style>
+
+  <script src="assets/library/jquery.min.js"></script>
+  <script src="../dist/components/visibility.js"></script>
+  <script src="../dist/components/sidebar.js"></script>
+  <script src="../dist/components/transition.js"></script>
+  <script>
+    $(document)
+      .ready(function () {
+
+        // fix menu when passed
+        $('.masthead')
+          .visibility({
+            once: false,
+            onBottomPassed: function () {
+              $('.fixed.menu').transition('fade in');
+            },
+            onBottomPassedReverse: function () {
+              $('.fixed.menu').transition('fade out');
+            }
+          })
+          ;
+
+        // create sidebar and attach to menu open
+        $('.ui.sidebar')
+          .sidebar('attach events', '.toc.item')
+          ;
+        $('.ui.calendar')
+          .calendar({
+            type: 'date',
+            formatter: {
+              date: function (date, settings) {
+                if (!date) return '';
+                var day = date.getDate();
+                if (day < 10) {
+                  day = '0' + day
+                }
+                var month = date.getMonth() + 1;
+                if (month < 10) {
+                  month = '0' + month
+                }
+                var year = date.getFullYear();
+                return year + '-' + month + '-' + day
+              }
+            }
+          })
+          ;
+        $('.ui.dropdown')
+          .dropdown({
+            allowAdditions: true
+          })
+          ;
+        $.ajax({
+          url: '{{ url_for("get_new_track_id")}}',
+          type: 'POST',
+          data: {}
+          , success: function (res) {
+            $('#track_id').html(res)
+
+          }, error: function (res) {
+
+          }
+        });
+        var genres = {{ genres| safe
+      }};
+    $('#track_playlist_genre').append('<option value="">Select or add a new genre</option>');
+    for (var i = 1; i < genres.length; i++) {
+      $('#track_playlist_genre').append('<option value="' + genres[i] + '">' + genres[i] + '</option>');
+    }
+    var subgenres = {{ subgenres| safe }};
+    $('#track_playlist_subgenre').append('<option value="">Select or add a new subgenre</option>');
+    for (var i = 1; i < subgenres.length; i++) {
+      $('#track_playlist_subgenre').append('<option value="' + subgenres[i] + '">' + subgenres[i] + '</option>');
+    }
+    })
+    ;
+  </script>
+</head>
+
+<body>
+
+  <!-- Following Menu -->
+  <div class="ui large top fixed menu">
+    <div class="ui container">
+      <a class="active item" href="{{ url_for('index')}}">Home</a>
+      <a class="item disabled">All songs</a>
+      <div class="right menu">
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar Menu -->
+  <div class="ui vertical inverted sidebar menu">
+    <a class="active item" href="{{ url_for('index')}}">Home</a>
+    <a class="item disabled">All songs</a>
+  </div>
+
+
+  <!-- Page Contents -->
+  <div class="pusher">
+
+    <br><br>
+
+    <div class="ui vertical stripe container" id ="message_div" style="margin-top: 40px;">
+      
+      <div class="ui two column center aligned grid">
+        <div class="column">
+          <table class="ui definition table">
+            <tbody>
+              <tr>
+                <td rowspan="1" class="five wide">Track ID</td>
+                <td id="track_id" class="disabled" disabled></td>
+
+              </tr>
+              <tr>
+                <td rowspan="1" class="five wide">Track name</td>
+                <td>
+                  <div class="ui fluid transparent input">
+                    <input id="track_name" type="text">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td rowspan="1" class="five wide">Track artist</td>
+                <td>
+                  <div class="ui fluid transparent input">
+                    <input id="track_artist" type="text">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td rowspan="1" class="five wide">Track popularity</td>
+                <td>
+                  <div class="ui fluid transparent input">
+                    <input id="track_popularity" type="number">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td rowspan="1" class="five wide">Track album ID</td>
+                <td>
+                  <div class="ui fluid transparent input">
+                    <input id="track_album_id" type="text" placeholder="22 alphanumeric characters">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td rowspan="1" class="five wide">Track album name</td>
+                <td>
+                  <div class="ui fluid transparent input">
+                    <input id="track_album_name" type="text">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td rowspan="1" class="five wide single line">Track album release date</td>
+                <td>
+                  <div class="ui calendar" style="border: 0px;">
+                    <div class="ui transparent input left icon">
+                      <i class="calendar icon"></i>
+                      <input id="track_album_release_date" type="text">
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td rowspan="1" class="five wide">Playlist name</td>
+                <td>
+                  <div class="ui fluid transparent input">
+                    <input id="track_playlist_name" type="text">
+                  </div>
+                </td>
+              </tr>
+
+
+
+            </tbody>
+          </table>
+        </div>
+        <div class="column">
+          <table class="ui definition table">
+            <tbody>
+              <tr>
+                <td rowspan="1" class="five wide">Playlist ID</td>
+                <td>
+                  <div class="ui fluid transparent input">
+                    <input id="track_playlist_id" type="text" placeholder="22 alphanumeric characters">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td rowspan="1" class="five wide">Playlist genre</td>
+                <td style="padding: 0%;"><select id="track_playlist_genre" name="genre"
+                    class="ui fluid search dropdown">
+                  </select></td>
+              </tr>
+              <tr>
+                <td rowspan="1" class="five wide">Playlist subgenre</td>
+                <td style="padding: 0%;"><select id="track_playlist_subgenre" name="subgenre"
+                    class="ui fluid search dropdown" style="border: none !important; ">
+                  </select></td>
+              </tr>
+              <tr>
+                <td id="danceability" rowspan="1" class="five wide">Danceability</td>
+                <td>
+                  <div class="ui fluid transparent input">
+                    <input id="track_danceability" type="number">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td id="energy" rowspan="1" class="five wide">Energy</td>
+                <td>
+                  <div class="ui fluid transparent input">
+                    <input id="track_energy" type="number">
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td id="valence" rowspan="1" class="five wide">Valence</td>
+                <td>
+                  <div class="ui fluid transparent input">
+                    <input id="track_valence" type="number">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td rowspan="1" class="five wide">Tempo</td>
+                <td>
+                  <div class="ui fluid transparent input">
+                    <input id="track_tempo" type="number">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td rowspan="1" class="five wide">Duration</td>
+                <td>
+                  <div class="ui two column center aligned grid">
+                    <div class="column">
+                      <div class="ui fluid transparent input">
+                        <input id="track_duration_min" type="number" placeholder="min">
+                      </div>
+                    </div>
+                    <div class="column">
+                      <div class="ui fluid transparent input">
+                        <input id="track_duration_sec" type="number" placeholder="sec">
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="ui vertical container">
+      <div class="ui two column center aligned grid">
+        <div class="column" style="text-align: left;"><a class="ui button" href="{{ url_for('admin')}}">
+            <i class="arrow left icon"></i>
+            Back
+          </a></div>
+        <div id="save_button" class="column" style="text-align: right;"><a class="ui green button">
+            <i class="save icon"></i>
+            Save
+          </a></div>
+      </div>
+
+
+
+
+    </div>
+
+    <br><br><br><br><br>
+
+    <div class="ui inverted vertical footer segment">
+      <div class="ui container">
+        <div class="ui stackable inverted divided equal height stackable grid">
+          <div class="four wide column">
+            <h4 class="ui inverted header">About</h4>
+            <div class="ui inverted link list">
+              <a href="#" class="item">Sitemap</a>
+              <a href="#" class="item">Contact Us</a>
+              <a href="#" class="item">Religious Ceremonies</a>
+              <a href="#" class="item">Gazebo Plans</a>
+            </div>
+          </div>
+          <div class="four wide column">
+            <h4 class="ui inverted header">Services</h4>
+            <div class="ui inverted link list">
+              <a href="#" class="item">Banana Pre-Order</a>
+              <a href="#" class="item">DNA FAQ</a>
+              <a href="#" class="item">How To Access</a>
+              <a href="#" class="item">Favorite X-Men</a>
+            </div>
+          </div>
+          <div class="seven wide column">
+            <h4 class="ui inverted header">Footer Header</h4>
+            <p>Extra space for a call to action inside the footer that could help re-engage users.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script>
+  $('#month_year_calendar')
+    .calendar({
+      type: 'month'
+    })
+    ;
+  $('.ui.dropdown')
+    .dropdown()
+    ;
+  $('#danceability')
+    .popup({
+      content: 'Danceability describes how suitable a track is for dancing based ' +
+        'on a combination of musical elements including tempo, rhythm stability, beat ' +
+        'strength, and overall regularity. A value of 0.0 is least danceable and 1 is ' +
+        'most danceable.'
+    })
+    ;
+  $('#energy')
+    .popup({
+      content: 'Energy is a measure from 0.0 to 1.0 and represents a perceptual measure ' +
+        'of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. ' +
+        'For example, death metal has high energy, while a Bach prelude scores low on the scale. ' +
+        'Perceptual features contributing to this attribute include dynamic range, perceived loudness, ' +
+        'timbre, onset rate, and general entropy.'
+    })
+    ;
+  $('#valence')
+    .popup({
+      content: 'A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track. ' +
+        'Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks ' +
+        'with low valence sound more negative (e.g. sad, depressed, angry).'
+    })
+    ;
+  $('#save_button').click(function () {
+    var error = false;
+    var track_id = $('#track_id').html();
+    if ($('#track_name').val() == '') {
+      error = true;
+    }
+    var track_name = $('#track_name').val();
+
+    if ($('#track_artist').val() == '') {
+      error = true;
+    }
+    var track_artist = $('#track_artist').val();
+
+    if ($('#track_popularity').val() == '' || parseInt($('#track_popularity').val()) < 0 || parseInt($('#track_popularity').val()) > 100) {
+      error = true;
+    }
+    var track_popularity = $('#track_popularity').val();
+    var letters = /^[0-9a-z]/gi;
+    if ($('#track_album_id').val() == '' || $('#track_album_id').val().length != 22 || !($('#track_album_id').val()).match(letters)) {
+      error = true;
+    }
+    var track_album_id = $('#track_album_id').val();
+
+    if ($('#track_album_release_date').val() == '') {
+      error = true;
+    }
+    var track_album_release_date = $('#track_album_release_date').val();
+
+    if ($('#track_album_name').val() == '') {
+      error = true;
+    }
+    var track_album_name = $('#track_album_name').val();
+
+    if ($('#track_playlist_name').val() == '') {
+      error = true;
+    }
+    var track_playlist_name = $('#track_playlist_name').val();
+
+    if ($('#track_playlist_id').val() == '' || $('#track_playlist_id').val().length != 22 || !($('#track_playlist_id').val()).match(letters)) {
+      error = true;
+    }
+    var track_playlist_id = $('#track_playlist_id').val();
+
+    if ($('#track_playlist_genre').val() == '') {
+      error = true;
+    }
+    var track_playlist_genre = $('#track_playlist_genre').val();
+
+    if ($('#track_playlist_subgenre').val() == '') {
+      error = true;
+    }
+    var track_playlist_subgenre = $('#track_playlist_subgenre').val();
+
+    if ($('#track_danceability').val() == '' || parseFloat($('#track_danceability').val()) < 0 || parseFloat($('#track_danceability').val()) > 1) {
+      error = true;
+    }
+    var track_danceability = $('#track_danceability').val();
+
+    if ($('#track_energy').val() == '' || parseFloat($('#track_energy').val()) < 0 || parseFloat($('#track_energy').val()) > 1) {
+      error = true;
+    }
+    var track_energy = $('#track_energy').val();
+
+    if ($('#track_valence').val() == '' || parseFloat($('#track_valence').val()) < 0 || parseFloat($('#track_valence').val()) > 1) {
+      error = true; 
+    }
+    var track_valence = $('#track_valence').val();
+
+    if ($('#track_tempo').val() == '' || parseFloat($('#track_tempo').val()) < 0) {
+      error = true;
+    }
+    var track_tempo = $('#track_tempo').val();
+
+    if ($('#track_duration_min').val() == '' || parseInt($('#track_duration_min').val()) < 0) {
+      error = true;
+    }
+    var track_duration_min = $('#track_duration_min').val();
+
+    if ($('#track_duration_sec').val() == '' || parseInt($('#track_duration_sec').val()) < 0 || parseInt($('#track_duration_sec').val()) > 59) {
+      error = true;
+    }
+    var track_duration_sec = $('#track_duration_sec').val();
+
+    if (error) {
+      $('#message').remove();
+        $('#message_div').append('<div id="message" class="ui negative message">'+
+'  <i class="close icon"></i>'+
+ '<div class="header">'+
+    "Some fields contains errors."+
+  "</div>"+
+'</div>')
+    } else {
+      $.ajax({
+        url: '{{ url_for("save_song")}}',
+        type: 'POST',
+        data: {
+          'track_id': track_id,
+          'track_name': track_name,
+          'track_artist': track_artist,
+          'track_popularity': track_popularity,
+          'track_album_id': track_album_id,
+          'track_album_name': track_album_name,
+          'track_album_release_date': track_album_release_date,
+          'track_playlist_name': track_playlist_name,
+          'track_playlist_id': track_playlist_id,
+          'track_playlist_genre': track_playlist_genre,
+          'track_playlist_subgenre': track_playlist_subgenre,
+          'track_danceability': track_danceability,
+          'track_energy': track_energy,
+          'track_valence': track_valence,
+          'track_tempo': track_tempo,
+          'track_duration_min': track_duration_min,
+          'track_duration_sec': track_duration_sec
+          
+
+        }
+        , success: function (res) {
+          if (res){
+            $('#message').remove();
+$('#message_div').append(
+  '<div id="message" class="ui positive message">'+
+  '<i class="close icon"></i>'+
+  '<div class="header">'+
+    'Insert successful.'+
+  '</div>'+
+'</div>'
+)
+          } else {
+            $('#message').remove();
+            $('#message_div').append('<div id="message" class="ui negative message">'+
+'  <i class="close icon"></i>'+
+ '<div class="header">'+
+    "There was an error while inserting new song."+
+  "</div>"+
+'</div>')
+          }
+
+        }, error: function (res) {
+          $('#message').remove();
+            $('#message_div').append('<div id="message" class="ui negative message">'+
+'  <i class="close icon"></i>'+
+ '<div class="header">'+
+    "There was an error while inserting new song."+
+  "</div>"+
+'</div>')
+        }
+      });
+    }
+
+
+  });
+</script>
+
+</html>
