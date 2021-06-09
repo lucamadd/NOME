@@ -36,7 +36,7 @@ def song():
 def song_admin():
     track_id = request.args['song']
     track = db_helper.find_track_by_id(track_id)
-    return render_template('song_admin.html', track=track)
+    return render_template('song_admin.html', track=track, genres = json.dumps(db_helper.get_all_genres()), subgenres = db_helper.get_all_subgenres())
 
 @app.route('/new_song')
 def new_song():
@@ -69,6 +69,11 @@ def save_song():
 def delete_song():
     data = request.form
     return jsonify(db_helper.delete_song(data))
+
+@app.route('/update_song', methods = ['GET', 'POST'])
+def update_song():
+    data = request.form
+    return jsonify(db_helper.update_song(data))
 
 @app.errorhandler(500)
 def internal_server_error(e):

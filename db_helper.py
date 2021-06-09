@@ -329,6 +329,53 @@ def delete_song(data):
   if result.deleted_count == 1:
     return True
   return False
+
+def update_song(data):
+  myclient = pymongo.MongoClient("mongodb+srv://admin:admin@clusternome.9mulw.mongodb.net/NOME?retryWrites=true&w=majority")
+
+  db = myclient["NOME"]
+
+  if data == None:
+    return False
+
+  track_id = int(data['track_id'])
+  track_name = data['track_name']
+  track_artist = data['track_artist']
+  track_popularity = int(data['track_popularity'])
+  track_album_id = data['track_album_id']
+  track_album_name = data['track_album_name']
+  track_album_release_date = data['track_album_release_date']
+  track_playlist_name = data['track_playlist_name']
+  track_playlist_id = data['track_playlist_id']
+  track_playlist_genre = data['track_playlist_genre']
+  track_playlist_subgenre = data['track_playlist_subgenre']
+  track_danceability = float(data['track_danceability'])
+  track_energy = float(data['track_energy'])
+  track_valence = float(data['track_valence'])
+  track_tempo = float(data['track_tempo'])
+  track_duration_min = int(data['track_duration_min'])
+  track_duration_sec = int(data['track_duration_sec'])
+
+  #trasformo in ms
+  track_duration_sec = track_duration_sec + track_duration_min*60
+  track_duration_ms = track_duration_sec * 1000
+
+  filter = { 'track_id': track_id }
+    
+  # Values to be updated.
+  newvalues = { "$set": { 'track_name': track_name, 'track_artist': track_artist,
+         'track_popularity': track_popularity, 'album': {'track_album_id': track_album_id,
+          'track_album_name': track_album_name, 'track_album_release_date': track_album_release_date},
+          'playlist': {'playlist_name': track_playlist_name, 'playlist_id': track_playlist_id,
+          'playlist_genre': track_playlist_genre, 'playlist_subgenre': track_playlist_subgenre},
+          'danceability': track_danceability, 'energy': track_energy, 'valence':track_valence, 'tempo': track_tempo,
+          'duration_ms': track_duration_ms } }
+    
+  # Using update_one() method for single 
+  # updation.
+  result = db.track.update_one(filter, newvalues) 
+
+  return result.matched_count > 0 
   
 
 
