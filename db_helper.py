@@ -138,6 +138,10 @@ def find_tracks(data):
     else:
       query['album.track_album_release_date'] = {
       "$regex": f'^{year}-{month}'}
+  else:
+    if month != '' and month != '00' and month != '0':
+      query['album.track_album_release_date'] = {
+      "$regex": f'-{month}-'}
       
   if duration != '' or duration != '0':
     if duration == '1': #meno di 2 minuti
