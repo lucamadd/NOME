@@ -172,9 +172,11 @@ def find_tracks(data):
   docs = coll.find(query).skip((int(page))*12).limit(12)
   if popularity != '' or popularity != '0':
     if popularity == '1': #most popular first
-      docs = coll.find(query).skip((int(page))*12).limit(12).sort('track_popularity', pymongo.DESCENDING)
+      docs = coll.find(query).skip((int(page))*12).limit(12)\
+      .sort('track_popularity', pymongo.DESCENDING)
     elif popularity == '2': #least popular first
-      docs = coll.find(query).skip((int(page))*12).limit(12).sort('track_popularity', pymongo.ASCENDING)
+      docs = coll.find(query).skip((int(page))*12).limit(12)\
+      .sort('track_popularity', pymongo.ASCENDING)
     
 
   for doc in docs:
